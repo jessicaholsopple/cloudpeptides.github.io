@@ -227,8 +227,10 @@ if (product) {
 
           {product.researchSummary && (
             <section class="cp-product-research" aria-labelledby="researchHeading">
-              <h2 id="researchHeading">What researchers are studying</h2>
-              <p>{product.researchSummary.full}</p>
+              <div class="cp-product-research__inner">
+                <h2 id="researchHeading">What researchers are studying</h2>
+                <p>{product.researchSummary.full}</p>
+              </div>
             </section>
           )}
         </div>
@@ -405,6 +407,16 @@ if (product) {
     padding-top: 1.75rem;
     border-top: 1px solid var(--border-subtle);
   }
+  /* The divider above (.cp-product-research's own border-top) stays
+     full-width, matching every other section rule on the page — only
+     the readable text column centers within it, rather than the
+     max-width paragraph hugging the container's left edge with a wide
+     empty gap on the right (the layout the user flagged as off-center
+     in production). */
+  .cp-product-research__inner {
+    max-width: 65ch;
+    margin: 0 auto;
+  }
   .cp-product-research h2 {
     font-family: var(--font-display);
     font-weight: 600;
@@ -417,7 +429,6 @@ if (product) {
     line-height: 1.6;
     margin: 0;
     white-space: pre-line;
-    max-width: 65ch;
   }
 
   @media (max-width: 760px) {
