@@ -2,10 +2,33 @@
 
 Append-only. One entry per meaningful step, per [CLAUDE.md](../CLAUDE.md) §3/§11/§12.
 
+## Eloralintide published (2026-08-25, same-day follow-up)
+
+User explicitly scoped this to publishing Eloralintide only (not merging `rebuild/astro-platform` into
+`main`, not a production deploy — both offered, both declined for now).
+
+Ran the exact same readiness gate the real admin UI's Publish action enforces
+(`checkPublishReadiness`, `src/lib/admin/validation.ts`): 7 of Eloralintide's 25 claims had zero cited
+sources (5 standard editorial/site-policy boilerplate claims + 2 compound-specific negative-finding/
+context claims) — blocked, exactly the same situation the 2026-08-19 batch hit. Fixed with
+`scripts/research/fix-eloralintide-uncited-claims.mjs`, mirroring that batch's own established fix
+pattern exactly: the 5 boilerplate claims linked to the same real, already-live "Cloud Peptides Research
+Use Policy" page every other published compound's boilerplate claims cite; the 2 custom claims linked
+(`relationship='provides_context'`) to real sources already cited elsewhere on the same profile (the
+Lancet 48-week paper for the "long-term data doesn't exist yet" claim; the Molecular Metabolism
+discovery paper for the FAQ answer restating its own eloralintide/cagrilintide comparison). Re-verified
+0 uncited claims before publishing.
+
+`scripts/research/publish-eloralintide.mjs` (mirrors `publish-batch.mjs`): re-ran the readiness check
+(0 blockers), set all 25 claims to `status='published'`, then the compound to `status='published'` with
+`last_reviewed_at` stamped. Verified live: compound now returned by a `status='published'`-filtered
+query. No redeploy needed — the live staging Worker already reads this content dynamically from the
+same shared database.
+
 ## Eloralintide research profile + shop research-summary content/UI (2026-08-25)
 
-Not yet deployed to staging or merged to main — committed to `rebuild/astro-platform` locally,
-awaiting explicit go-ahead per CLAUDE.md §9 before pushing/deploying.
+Deployed to staging (commit `1fec7fc`, CI run 32888614936 — `ci` + `deploy-staging` both green,
+`deploy-production` correctly skipped, not `main`). Not merged to `main`, not deployed to production.
 
 **1. Eloralintide (LY3841136) draft research profile.** Commit `a975e52`.
 
