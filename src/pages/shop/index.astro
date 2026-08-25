@@ -175,9 +175,9 @@ const breadcrumbJsonLd = {
             const low = lowestPriceOption(product);
             const multi = product.options.length > 1;
             const codes = product.options.map((o) => o.code.toLowerCase()).join(' ');
+            const summary = product.researchSummary;
             return (
-              <a
-                href={`/shop/${product.id}`}
+              <div
                 class="cp-product-card"
                 data-shop-item
                 data-id={product.id}
@@ -185,41 +185,65 @@ const breadcrumbJsonLd = {
                 data-category={product.category}
                 data-codes={codes}
               >
-                <Card class="cp-product-card__inner" accent="var(--terracotta-text)">
-                  <div class="cp-product-card__image" aria-hidden="true">
-                    <svg viewBox="0 0 40 40" width="100%" height="100%">
-                      <rect
-                        x="14"
-                        y="8"
-                        width="12"
-                        height="26"
-                        rx="4"
-                        fill="none"
-                        stroke="var(--border-interactive)"
-                        stroke-width="1.5"
-                      />
-                      <rect
-                        x="16"
-                        y="4"
-                        width="8"
-                        height="6"
-                        rx="1.5"
-                        fill="none"
-                        stroke="var(--border-interactive)"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                  <h3 class="cp-product-card__name">{product.name}</h3>
-                  <p class="cp-product-card__sub">
-                    10 Vial Kit{multi ? ` • ${product.options.length} options` : ''}
-                  </p>
-                  <p class="cp-product-card__price">
-                    {multi ? 'from ' : ''}
-                    {formatMoney(low.price)}
-                  </p>
-                </Card>
-              </a>
+                <a href={`/shop/${product.id}`} class="cp-product-card__link">
+                  <Card class="cp-product-card__inner" accent="var(--terracotta-text)">
+                    <div class="cp-product-card__image" aria-hidden="true">
+                      <svg viewBox="0 0 40 40" width="100%" height="100%">
+                        <rect
+                          x="14"
+                          y="8"
+                          width="12"
+                          height="26"
+                          rx="4"
+                          fill="none"
+                          stroke="var(--border-interactive)"
+                          stroke-width="1.5"
+                        />
+                        <rect
+                          x="16"
+                          y="4"
+                          width="8"
+                          height="6"
+                          rx="1.5"
+                          fill="none"
+                          stroke="var(--border-interactive)"
+                          stroke-width="1.5"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="cp-product-card__name">{product.name}</h3>
+                    <p class="cp-product-card__sub">
+                      10 Vial Kit{multi ? ` • ${product.options.length} options` : ''}
+                    </p>
+                    <p class="cp-product-card__price">
+                      {multi ? 'from ' : ''}
+                      {formatMoney(low.price)}
+                    </p>
+                    {/* Fixed-height preview (CSS line-clamp below) so every
+                       collapsed card is the same height regardless of how
+                       long an individual product's preview text is —
+                       products with no authored summary yet get an empty
+                       placeholder of the same reserved height rather than a
+                       shorter card. */}
+                    <p class="cp-product-card__preview">{summary?.preview ?? ''}</p>
+                  </Card>
+                </a>
+                {summary && (
+                  // Native <details>/<summary> — not a custom JS
+                  // accordion — deliberately: full keyboard support
+                  // (Enter/Space to toggle, natural Tab order) and
+                  // expanded/collapsed state announced to screen readers
+                  // automatically, with zero JS required. Kept as a
+                  // sibling of the <a> above, not nested inside it —
+                  // nesting an interactive <summary> inside an <a> would
+                  // be invalid HTML and would fire both the toggle and
+                  // the navigation on one click/keypress.
+                  <details class="cp-product-card__research">
+                    <summary>What researchers are studying</summary>
+                    <p>{summary.full}</p>
+                  </details>
+                )}
+              </div>
             );
           })
       }
@@ -387,12 +411,20 @@ const breadcrumbJsonLd = {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
+    /* start, not the default stretch — a card whose "What researchers
+       are studying" <details> is expanded must grow on its own without
+       stretching every other card in its grid row to match it. Equal
+       collapsed-card height is instead guaranteed by fixed-height
+       content (line-clamped name/preview) below, not by grid stretch. */
+    align-items: start;
   }
   .cp-product-card {
+    color: inherit;
+  }
+  .cp-product-card__link {
     display: block;
     text-decoration: none;
     color: inherit;
-    height: 100%;
   }
   .cp-product-card :global(.cp-card__body) {
     display: flex;
@@ -411,6 +443,11 @@ const breadcrumbJsonLd = {
     font-size: 1.0625rem;
     color: var(--text-primary);
     margin: 0 0 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
   .cp-product-card__sub {
     font-size: var(--text-caption);
@@ -422,6 +459,72 @@ const breadcrumbJsonLd = {
     font-weight: 500;
     color: var(--terracotta-text);
     margin: 0;
+  }
+  /* Fixed 3-line clamp (with a matching min-height fallback for
+     browsers without line-clamp support) — this, not layout stretch,
+     is what keeps every collapsed card the same height regardless of
+     how long that product's preview sentence is. */
+  .cp-product-card__preview {
+    font-size: var(--text-caption);
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0.75rem 0 0;
+    min-height: calc(1.4em * 3);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .cp-product-card__research {
+    margin-top: 0.625rem;
+    border: 1px solid var(--border-subtle);
+    border-top: none;
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
+    background: var(--bg-elevated);
+  }
+  .cp-product-card__research summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.75rem 1rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--terracotta-text);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 44px;
+  }
+  /* Custom disclosure triangle (list-style:none above removes the
+     native marker) so it looks identical across browsers instead of
+     relying on each engine's own default summary marker glyph. */
+  .cp-product-card__research summary::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform 150ms ease-out;
+    flex-shrink: 0;
+  }
+  .cp-product-card__research[open] summary::before {
+    transform: rotate(90deg);
+  }
+  .cp-product-card__research summary::-webkit-details-marker {
+    display: none;
+  }
+  .cp-product-card__research summary:focus-visible {
+    outline: 2px solid var(--terracotta-text);
+    outline-offset: -2px;
+    border-radius: var(--radius-control);
+  }
+  .cp-product-card__research p {
+    margin: 0;
+    padding: 0 1rem 1rem;
+    font-size: var(--text-caption);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    white-space: pre-line;
   }
 
   .cp-product-grid-empty {
@@ -446,6 +549,11 @@ const breadcrumbJsonLd = {
   @media (max-width: 480px) {
     .cp-product-grid {
       grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cp-product-card__research summary::before {
+      transition: none;
     }
   }
 </style>

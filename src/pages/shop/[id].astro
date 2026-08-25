@@ -218,10 +218,19 @@ if (product) {
             </div>
 
             <p class="cp-disclaimer">
-              Research use only. Not for human consumption. No peptide information or medical claims
-              are provided on this page. See our <a href="/shop-terms">Shop Terms</a>.
+              Research use only. Not for human consumption. Any research summary below describes
+              general areas of scientific research only — it is not medical advice, dosing guidance,
+              or a claim that this product is safe or effective for any use. See our{' '}
+              <a href="/shop-terms">Shop Terms</a>.
             </p>
           </div>
+
+          {product.researchSummary && (
+            <section class="cp-product-research" aria-labelledby="researchHeading">
+              <h2 id="researchHeading">What researchers are studying</h2>
+              <p>{product.researchSummary.full}</p>
+            </section>
+          )}
         </div>
       )
     }
@@ -388,6 +397,27 @@ if (product) {
     font-weight: 500;
     margin: 0.625rem 0 0;
     text-align: center;
+  }
+
+  .cp-product-research {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .cp-product-research h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
+  }
+  .cp-product-research p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-line;
+    max-width: 65ch;
   }
 
   @media (max-width: 760px) {
