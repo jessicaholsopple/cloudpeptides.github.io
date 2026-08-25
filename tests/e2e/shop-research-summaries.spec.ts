@@ -102,7 +102,9 @@ test.describe('shop research summaries — accessibility scan', () => {
     page,
   }) => {
     await page.goto('/shop/ghk-cu');
-    await expect(page.getByRole('heading', { name: 'What researchers are studying' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'What researchers are studying' }),
+    ).toBeVisible();
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
   });

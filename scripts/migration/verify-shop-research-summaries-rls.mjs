@@ -35,7 +35,10 @@ async function main() {
   // structural confirmation, but PostgREST doesn't expose that schema
   // by default in this project and adding it isn't worth a schema
   // config change just for this check.
-  const { error: anonSelectErr } = await anon.from('shop_product_research_summaries').select('*').limit(1);
+  const { error: anonSelectErr } = await anon
+    .from('shop_product_research_summaries')
+    .select('*')
+    .limit(1);
   record('anon SELECT is rejected (permission denied)', !!anonSelectErr, anonSelectErr?.message);
 
   const { error: anonInsertErr } = await anon
@@ -47,7 +50,10 @@ async function main() {
   // a row (i.e. this test itself caught a real hole), remove it via
   // the service-role client so this verification script never leaves
   // test data behind.
-  await admin.from('shop_product_research_summaries').delete().eq('product_slug', 'rls-check-should-never-persist');
+  await admin
+    .from('shop_product_research_summaries')
+    .delete()
+    .eq('product_slug', 'rls-check-should-never-persist');
 
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

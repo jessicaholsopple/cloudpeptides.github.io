@@ -140,7 +140,9 @@ export async function listPublicShopProducts(accessToken: string): Promise<Produ
     .order('price', { ascending: true });
   if (error) throw error;
   const rows = (data ?? []) as unknown as PublicShopRow[];
-  const slugs = [...new Set(rows.map((r) => r.product_slug).filter((s): s is string => Boolean(s)))];
+  const slugs = [
+    ...new Set(rows.map((r) => r.product_slug).filter((s): s is string => Boolean(s))),
+  ];
   const summaryRows = await fetchResearchSummaries(supabase, slugs);
   return groupShopProductRows(rows, summaryRows);
 }

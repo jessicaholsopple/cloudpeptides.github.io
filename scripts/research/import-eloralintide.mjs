@@ -9,7 +9,11 @@
 // docs/research/2026-08-25-eloralintide-research-manifest.md — this
 // file is the mechanical import, not the research record itself.
 import { pathToFileURL } from 'node:url';
-import { getServiceClient, importCompound, standardBoilerplateClaims } from './lib/import-helpers.mjs';
+import {
+  getServiceClient,
+  importCompound,
+  standardBoilerplateClaims,
+} from './lib/import-helpers.mjs';
 
 const SEARCH_DATE = '2026-08-25';
 const DATABASES_SEARCHED = [
@@ -96,7 +100,8 @@ export const sources = {
   },
   nct06230523: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of LY3841136 Compared With Placebo in Adult Participants With Obesity or Overweight',
+    title:
+      'A Study of LY3841136 Compared With Placebo in Adult Participants With Obesity or Overweight',
     url: 'https://clinicaltrials.gov/study/NCT06230523',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2024-02-05',
@@ -115,7 +120,8 @@ export const sources = {
   },
   nct06345066: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of LY3841136 in Overweight and Obese Participants (with Tirzepatide combination)',
+    title:
+      'A Study of LY3841136 in Overweight and Obese Participants (with Tirzepatide combination)',
     url: 'https://clinicaltrials.gov/study/NCT06345066',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2024-04-03',
@@ -172,7 +178,8 @@ export const sources = {
   },
   nct07765511: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of Macupatide (LY3532226) in Participants With Obesity or Overweight Without Type 2 Diabetes',
+    title:
+      'A Study of Macupatide (LY3532226) in Participants With Obesity or Overweight Without Type 2 Diabetes',
     url: 'https://clinicaltrials.gov/study/NCT07765511',
     publisherOrAgency: 'Eli Lilly and Company',
     // Registry gives only month precision ("2026-10") for this
@@ -184,7 +191,8 @@ export const sources = {
   },
   nct07282600: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of Eloralintide (LY3841136) in Participants With Obesity or Overweight, and Type 2 Diabetes',
+    title:
+      'A Study of Eloralintide (LY3841136) in Participants With Obesity or Overweight, and Type 2 Diabetes',
     url: 'https://clinicaltrials.gov/study/NCT07282600',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2025-12-15',
@@ -193,7 +201,8 @@ export const sources = {
   },
   nct07321886: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of Eloralintide (LY3841136) in Participants With Obesity, or Overweight Without Type 2 Diabetes',
+    title:
+      'A Study of Eloralintide (LY3841136) in Participants With Obesity, or Overweight Without Type 2 Diabetes',
     url: 'https://clinicaltrials.gov/study/NCT07321886',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2026-02-06',
@@ -222,7 +231,8 @@ export const sources = {
   },
   nct07369011: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of Eloralintide (LY3841136) in Participants With Obstructive Sleep Apnea and Obesity or Overweight',
+    title:
+      'A Study of Eloralintide (LY3841136) in Participants With Obstructive Sleep Apnea and Obesity or Overweight',
     url: 'https://clinicaltrials.gov/study/NCT07369011',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2026-02-10',
@@ -240,7 +250,8 @@ export const sources = {
   },
   nct07738614: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of Eloralintide (LY3841136) in Participants With Obesity or Overweight (gastric emptying/PK)',
+    title:
+      'A Study of Eloralintide (LY3841136) in Participants With Obesity or Overweight (gastric emptying/PK)',
     url: 'https://clinicaltrials.gov/study/NCT07738614',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2026-07-31',
@@ -249,7 +260,8 @@ export const sources = {
   },
   nct07665879: {
     sourceType: 'clinicaltrials_gov',
-    title: 'A Study of Eloralintide (LY3841136) in Participants With Overweight or Obesity (insulin sensitivity)',
+    title:
+      'A Study of Eloralintide (LY3841136) in Participants With Overweight or Obesity (insulin sensitivity)',
     url: 'https://clinicaltrials.gov/study/NCT07665879',
     publisherOrAgency: 'Eli Lilly and Company',
     publicationDate: '2026-06-24',
@@ -322,10 +334,12 @@ const studies = [
   {
     sourceKey: 'domMad',
     studyDesign: 'rct_human',
-    population: 'Participants with obesity or overweight, mean age 44, 29% female, mean BMI 32.6 kg/m2 (n=100)',
+    population:
+      'Participants with obesity or overweight, mean age 44, 29% female, mean BMI 32.6 kg/m2 (n=100)',
     sampleSize: 100,
     comparator: 'Placebo',
-    intervention: 'Eloralintide, once-weekly subcutaneous, 5 multiple-ascending-dose cohorts (1.2, 3, 6, 12 mg — no within-participant dose escalation), without dose escalation',
+    intervention:
+      'Eloralintide, once-weekly subcutaneous, 5 multiple-ascending-dose cohorts (1.2, 3, 6, 12 mg — no within-participant dose escalation), without dose escalation',
     route: 'subcutaneous',
     publishedResearchDose: '1.2-12 mg once weekly, 12 weeks, no escalation',
     duration: '12 weeks',
@@ -384,7 +398,8 @@ const claims = [
     statement:
       'Eloralintide is being investigated across an extensive Phase 1-3 clinical program (25 registered studies identified as of 2026-08-25, most still recruiting or enrolling), including studies in participants with type 2 diabetes, osteoarthritis-related knee pain, and obstructive sleep apnea in addition to obesity/overweight alone, and in combination with the incretin-pathway therapy tirzepatide and with a separate Lilly investigational compound (macupatide/LY3532226).',
     evidenceQuality: 'high',
-    qualityRationale: 'Directly counted from ClinicalTrials.gov registry search performed this review.',
+    qualityRationale:
+      'Directly counted from ClinicalTrials.gov registry search performed this review.',
     interpretationStatus: 'established',
     displayOrder: 2,
     sourceKeys: [
@@ -410,7 +425,8 @@ const claims = [
     statement:
       'Researchers designed eloralintide as a modified analogue of the hormone amylin, engineered to preferentially engage the AMY1R signaling pathway believed to be involved in satiety and food-intake regulation, rather than activating amylin and calcitonin receptors non-selectively as some earlier amylin-based research compounds do.',
     evidenceQuality: 'moderate',
-    qualityRationale: 'Mechanistic framing directly stated by the compound\'s discovery/characterization paper.',
+    qualityRationale:
+      "Mechanistic framing directly stated by the compound's discovery/characterization paper.",
     interpretationStatus: 'supported',
     displayOrder: 2,
     sourceKeys: [{ key: 'molMetab', relationship: 'directly_supports' }],
@@ -421,7 +437,8 @@ const claims = [
     statement:
       'In diet-induced obese rats, repeated eloralintide dosing produced dose-dependent reductions in food intake and body weight; across the doses studied (10-100 nmol/kg), fat mass accounted for an estimated 68%-85% of total weight lost. This is an animal finding and has not been established to occur to the same degree, or via the same proportional fat/lean split, in humans.',
     evidenceQuality: 'moderate',
-    qualityRationale: 'Single sponsor-authored preclinical rodent study; animal data does not establish human effect size.',
+    qualityRationale:
+      'Single sponsor-authored preclinical rodent study; animal data does not establish human effect size.',
     interpretationStatus: 'supported',
     displayOrder: 3,
     sourceKeys: [{ key: 'molMetab', relationship: 'directly_supports' }],
@@ -453,7 +470,8 @@ const claims = [
     statement:
       'Across Phase 1 human trials, eloralintide displayed a long terminal half-life (approximately 13-15.8 days) and dose-proportional exposure, consistent with the once-weekly subcutaneous dosing schedule used in every eloralintide trial identified.',
     evidenceQuality: 'high',
-    qualityRationale: 'Consistent finding across two independent Phase 1 human cohorts (single- and multiple-ascending-dose).',
+    qualityRationale:
+      'Consistent finding across two independent Phase 1 human cohorts (single- and multiple-ascending-dose).',
     interpretationStatus: 'supported',
     displayOrder: 1,
     sourceKeys: [
@@ -467,7 +485,8 @@ const claims = [
     statement:
       'In a Phase 1, randomized, placebo-controlled, single-ascending-dose human trial in 48 healthy participants (NCT05295940, Part A), single doses of eloralintide 4 mg and 12 mg produced mean body-weight reductions of 2.5% (p<0.01) and 4.4% (p<0.001) respectively by week 4, compared with a 0.6% increase with placebo.',
     evidenceQuality: 'high',
-    qualityRationale: 'Randomized, placebo-controlled human trial with peer-reviewed reported p-values.',
+    qualityRationale:
+      'Randomized, placebo-controlled human trial with peer-reviewed reported p-values.',
     interpretationStatus: 'supported',
     displayOrder: 3,
     sourceKeys: [
@@ -480,7 +499,8 @@ const claims = [
     statement:
       'In that same Phase 1 single-dose human trial, 9 of 48 participants receiving eloralintide reported 16 adverse events (15 of 16 mild); 2 participants reported 4 gastrointestinal events, including one moderate vomiting event; there were no treatment discontinuations, serious adverse events, or clinically significant laboratory/ECG changes.',
     evidenceQuality: 'high',
-    qualityRationale: 'Directly reported safety data from a randomized, placebo-controlled human trial.',
+    qualityRationale:
+      'Directly reported safety data from a randomized, placebo-controlled human trial.',
     interpretationStatus: 'supported',
     displayOrder: 1,
     sourceKeys: [{ key: 'molMetab', relationship: 'directly_supports' }],
@@ -491,7 +511,8 @@ const claims = [
     statement:
       'In a 12-week Phase 1, randomized, placebo-controlled, multiple-ascending-dose human trial in 100 participants with obesity or overweight (NCT05295940, Part B), once-weekly eloralintide without dose escalation produced least-squares-mean body-weight reductions ranging from 2.6% (1.2 mg) to 11.3% (12 mg) by week 12.',
     evidenceQuality: 'high',
-    qualityRationale: 'Randomized, placebo-controlled human trial; consistent across the full peer-reviewed paper and its earlier conference abstract.',
+    qualityRationale:
+      'Randomized, placebo-controlled human trial; consistent across the full peer-reviewed paper and its earlier conference abstract.',
     interpretationStatus: 'supported',
     displayOrder: 4,
     sourceKeys: [
@@ -505,7 +526,8 @@ const claims = [
     statement:
       'In that same 12-week Phase 1 human trial, the most common adverse events with eloralintide were decreased appetite (19% of participants), headache (12%), fatigue (11%), and COVID-19 (11%); gastrointestinal adverse events were comparatively infrequent — diarrhea (10%), nausea (8%), vomiting (4%) — and most adverse events were mild. One serious adverse event occurred (6 mg cohort), assessed by investigators as unrelated to eloralintide; there were no deaths.',
     evidenceQuality: 'high',
-    qualityRationale: 'Directly reported safety data, cross-confirmed between the full paper and its earlier conference abstract.',
+    qualityRationale:
+      'Directly reported safety data, cross-confirmed between the full paper and its earlier conference abstract.',
     interpretationStatus: 'supported',
     displayOrder: 2,
     sourceKeys: [
@@ -517,10 +539,10 @@ const claims = [
   {
     section: 'summary',
     statement:
-      'In a 48-week, randomized, double-blind, placebo-controlled Phase 2 trial in 263 adults with obesity or overweight and at least one weight-related comorbidity (without type 2 diabetes) at 46 US research centers (NCT06230523), once-weekly eloralintide produced mean body-weight reductions (efficacy estimand) ranging from approximately 9% (1 mg) to 20% (9 mg, and the 6-9 mg dose-escalation arm) at week 48, compared with a 0.4% reduction with placebo; every active-dose arm met the trial\'s pre-specified primary endpoint.',
+      "In a 48-week, randomized, double-blind, placebo-controlled Phase 2 trial in 263 adults with obesity or overweight and at least one weight-related comorbidity (without type 2 diabetes) at 46 US research centers (NCT06230523), once-weekly eloralintide produced mean body-weight reductions (efficacy estimand) ranging from approximately 9% (1 mg) to 20% (9 mg, and the 6-9 mg dose-escalation arm) at week 48, compared with a 0.4% reduction with placebo; every active-dose arm met the trial's pre-specified primary endpoint.",
     evidenceQuality: 'high',
     qualityRationale:
-      'Large randomized, double-blind, placebo-controlled Phase 2 trial published in a top-tier peer-reviewed journal (The Lancet) with independent academic first authors, cross-corroborated by the sponsor\'s own structured results posted directly to ClinicalTrials.gov.',
+      "Large randomized, double-blind, placebo-controlled Phase 2 trial published in a top-tier peer-reviewed journal (The Lancet) with independent academic first authors, cross-corroborated by the sponsor's own structured results posted directly to ClinicalTrials.gov.",
     interpretationStatus: 'supported',
     displayOrder: 5,
     sourceKeys: [
@@ -531,9 +553,10 @@ const claims = [
   {
     section: 'adverse_effects',
     statement:
-      'In that same Phase 2 trial, nausea was the most common adverse event and was clearly dose-related, ranging from 11% (1 mg) to 64% (6 mg) of participants, compared with 14% with placebo; fatigue was also common and dose-related, ranging from 0% (1 mg) to 46% (6-9 mg dose-escalation arm), compared with 12% with placebo. The trial\'s own directly-posted ClinicalTrials.gov results independently corroborate these figures at the per-arm level.',
+      "In that same Phase 2 trial, nausea was the most common adverse event and was clearly dose-related, ranging from 11% (1 mg) to 64% (6 mg) of participants, compared with 14% with placebo; fatigue was also common and dose-related, ranging from 0% (1 mg) to 46% (6-9 mg dose-escalation arm), compared with 12% with placebo. The trial's own directly-posted ClinicalTrials.gov results independently corroborate these figures at the per-arm level.",
     evidenceQuality: 'high',
-    qualityRationale: 'Adverse-event rates independently cross-validated between the peer-reviewed paper and the sponsor\'s own structured registry results, which matched closely.',
+    qualityRationale:
+      "Adverse-event rates independently cross-validated between the peer-reviewed paper and the sponsor's own structured registry results, which matched closely.",
     interpretationStatus: 'supported',
     displayOrder: 3,
     sourceKeys: [
@@ -544,10 +567,10 @@ const claims = [
   {
     section: 'summary',
     statement:
-      'The Lancet trial\'s efficacy-estimand percentages (e.g. -9% at 1 mg) and the raw ClinicalTrials.gov posted-results percentages for the same arms (e.g. -9.4% at 1 mg) differ slightly, most likely reflecting different statistical estimand methodology (e.g. an efficacy estimand vs. a treatment-policy/hypothetical estimand) rather than a data discrepancy; both figures are preserved here from their own source rather than reconciled into a single number.',
+      "The Lancet trial's efficacy-estimand percentages (e.g. -9% at 1 mg) and the raw ClinicalTrials.gov posted-results percentages for the same arms (e.g. -9.4% at 1 mg) differ slightly, most likely reflecting different statistical estimand methodology (e.g. an efficacy estimand vs. a treatment-policy/hypothetical estimand) rather than a data discrepancy; both figures are preserved here from their own source rather than reconciled into a single number.",
     evidenceQuality: 'moderate',
     qualityRationale:
-      'Editorial transparency note about a real numeric difference between two directly-compared primary sources reporting the same trial; the specific estimand-methodology explanation is a reasonable inference, not independently confirmed against the trial\'s statistical analysis plan.',
+      "Editorial transparency note about a real numeric difference between two directly-compared primary sources reporting the same trial; the specific estimand-methodology explanation is a reasonable inference, not independently confirmed against the trial's statistical analysis plan.",
     interpretationStatus: 'unknown',
     displayOrder: 6,
     sourceKeys: [
@@ -578,7 +601,8 @@ const claims = [
     statement:
       'As of this review (2026-08-25), no Phase 3 eloralintide trial has completed or reported results. Five registered Phase 3 studies are recruiting or enrolling, covering obesity/overweight with and without type 2 diabetes, participants already treated with a weekly incretin therapy, osteoarthritis-related knee pain, and obstructive sleep apnea.',
     evidenceQuality: 'high',
-    qualityRationale: 'Directly confirmed via ClinicalTrials.gov registry status check performed this review.',
+    qualityRationale:
+      'Directly confirmed via ClinicalTrials.gov registry status check performed this review.',
     interpretationStatus: 'established',
     displayOrder: 8,
     sourceKeys: [
@@ -594,16 +618,18 @@ const claims = [
     statement:
       'Long-term safety and efficacy beyond 48 weeks, effects specifically in people with type 2 diabetes, cardiovascular outcomes, and real-world effectiveness have not yet been established in any published human trial of eloralintide.',
     evidenceQuality: 'not_assessed',
-    qualityRationale: 'Absence-of-evidence statement, not a scientific claim requiring its own quality grade.',
+    qualityRationale:
+      'Absence-of-evidence statement, not a scientific claim requiring its own quality grade.',
     interpretationStatus: 'insufficient',
     displayOrder: 2,
   },
   {
     section: 'safety',
     statement:
-      'Every published human trial of eloralintide identified to date was funded by, and substantially authored by employees and shareholders of, Eli Lilly and Company (the compound\'s manufacturer); the Lancet Phase 2 publication\'s first authors are independent academic/clinical investigators, but independent (non-sponsor) replication of any eloralintide finding has not yet been published.',
+      "Every published human trial of eloralintide identified to date was funded by, and substantially authored by employees and shareholders of, Eli Lilly and Company (the compound's manufacturer); the Lancet Phase 2 publication's first authors are independent academic/clinical investigators, but independent (non-sponsor) replication of any eloralintide finding has not yet been published.",
     evidenceQuality: 'high',
-    qualityRationale: 'Directly stated in each paper\'s own conflict-of-interest/funding disclosure.',
+    qualityRationale:
+      "Directly stated in each paper's own conflict-of-interest/funding disclosure.",
     interpretationStatus: 'established',
     displayOrder: 3,
     sourceKeys: [
@@ -618,7 +644,8 @@ const claims = [
     statement:
       'Q: Is eloralintide the same thing as cagrilintide, semaglutide, or tirzepatide? A: No. Eloralintide (LY3841136) is a distinct investigational molecule, chemically and mechanistically different from all three, though it is being studied in combination with tirzepatide in several trials and is mechanistically related to cagrilintide (both are amylin-receptor-targeting compounds, but eloralintide is engineered for AMY1R selectivity while cagrilintide is a non-selective amylin/calcitonin receptor agonist — see the Mechanism section above).',
     evidenceQuality: 'moderate',
-    qualityRationale: 'Direct compound-identity clarification drawn from the discovery paper\'s own comparative framing.',
+    qualityRationale:
+      "Direct compound-identity clarification drawn from the discovery paper's own comparative framing.",
     interpretationStatus: 'supported',
     displayOrder: 3,
   },
@@ -664,9 +691,21 @@ async function main() {
     searchTerms: SEARCH_TERMS,
     batch: 'eloralintide-2026-08-25',
     aliases: [
-      { alias: 'LY3841136', type: 'development_code', note: "Eli Lilly's internal development code; used interchangeably with \"Eloralintide\" in every primary source reviewed." },
-      { alias: 'LY-3841136', type: 'spelling_variant', note: 'Hyphenated variant of the development code seen in some secondary sources.' },
-      { alias: 'Elora', type: 'abbreviation', note: 'Informal shorthand used by Lilly\'s own study authors in the 2025 ADA conference abstract (db25-882-P).' },
+      {
+        alias: 'LY3841136',
+        type: 'development_code',
+        note: 'Eli Lilly\'s internal development code; used interchangeably with "Eloralintide" in every primary source reviewed.',
+      },
+      {
+        alias: 'LY-3841136',
+        type: 'spelling_variant',
+        note: 'Hyphenated variant of the development code seen in some secondary sources.',
+      },
+      {
+        alias: 'Elora',
+        type: 'abbreviation',
+        note: "Informal shorthand used by Lilly's own study authors in the 2025 ADA conference abstract (db25-882-P).",
+      },
     ],
     sources,
     studies,

@@ -37,7 +37,11 @@ async function main() {
     .from('compounds')
     .select('id, slug, status')
     .ilike('name', '%eloralintide%');
-  record('exactly one compound named "eloralintide" exists', byName?.length === 1, `found ${byName?.length}`);
+  record(
+    'exactly one compound named "eloralintide" exists',
+    byName?.length === 1,
+    `found ${byName?.length}`,
+  );
   const compound = byName?.[0];
   if (!compound) {
     console.log('\nCannot continue — no eloralintide compound found.');
@@ -59,14 +63,20 @@ async function main() {
   // that exact check (without actually re-running the full import
   // script) to prove a second run would not create a duplicate.
   const { data: bySlug } = await client.from('compounds').select('id').eq('slug', 'eloralintide');
-  record('slug "eloralintide" resolves to exactly one row (re-import would skip, not duplicate)', bySlug?.length === 1);
+  record(
+    'slug "eloralintide" resolves to exactly one row (re-import would skip, not duplicate)',
+    bySlug?.length === 1,
+  );
 
   // --- source/trial-identifier deduplication ------------------------
   const { data: claims } = await client.from('claims').select('id').eq('compound_id', compound.id);
   const { data: claimSources } = await client
     .from('claim_sources')
     .select('source_id')
-    .in('claim_id', (claims ?? []).map((c) => c.id));
+    .in(
+      'claim_id',
+      (claims ?? []).map((c) => c.id),
+    );
   const sourceIds = [...new Set((claimSources ?? []).map((cs) => cs.source_id))];
   const { data: regRecords } = await client
     .from('regulatory_records')
@@ -91,7 +101,9 @@ async function main() {
   // index, migration 20260806144903) — confirm it's actually active by
   // checking every NCT number recorded for this profile is unique
   // across the WHOLE table, not just within this compound's own claims.
-  const nctValues = (idRows ?? []).filter((r) => r.identifier_type === 'nct_number').map((r) => r.identifier_value);
+  const nctValues = (idRows ?? [])
+    .filter((r) => r.identifier_type === 'nct_number')
+    .map((r) => r.identifier_value);
   const { data: globalNctRows } = await client
     .from('source_identifiers')
     .select('identifier_value, source_id')
@@ -117,13 +129,20 @@ async function main() {
   // documented in the sources table and the research manifest without
   // every single one also being claim-linked, which is expected).
   const allSourceUrls = Object.values(eloralintideSources).map((s) => s.url);
-  const { data: sourceRows } = await client.from('sources').select('id, url').in('url', allSourceUrls);
+  const { data: sourceRows } = await client
+    .from('sources')
+    .select('id, url')
+    .in('url', allSourceUrls);
   record(
     `all ${allSourceUrls.length} sources from the import script exist in the database, each exactly once`,
     (sourceRows?.length ?? 0) === allSourceUrls.length,
     `found ${sourceRows?.length}`,
   );
-  record('at least 15 of those sources are cited via claim_sources', sourceIds.length >= 15, `${new Set(sourceIds).size} claim-linked sources`);
+  record(
+    'at least 15 of those sources are cited via claim_sources',
+    sourceIds.length >= 15,
+    `${new Set(sourceIds).size} claim-linked sources`,
+  );
 
   // --- human vs. preclinical evidence labels ------------------------
   const { data: allClaims } = await client
@@ -148,22 +167,50 @@ async function main() {
     }
     return false;
   });
-  record('no claim conflates animal findings with an unqualified human finding', badMixing.length === 0, badMixing.map((c) => c.statement.slice(0, 60)).join(' | '));
+  record(
+    'no claim conflates animal findings with an unqualified human finding',
+    badMixing.length === 0,
+    badMixing.map((c) => c.statement.slice(0, 60)).join(' | '),
+  );
 
   const animalClaims = (allClaims ?? []).filter((c) => animalTerms.test(c.statement));
-  record('at least one claim is clearly labeled as animal/preclinical', animalClaims.length > 0, `${animalClaims.length} claims`);
-  const humanClaims = (allClaims ?? []).filter((c) => /randomized|Phase 1|Phase 2|participants/i.test(c.statement));
-  record('at least one claim is clearly labeled as a human trial finding', humanClaims.length > 0, `${humanClaims.length} claims`);
+  record(
+    'at least one claim is clearly labeled as animal/preclinical',
+    animalClaims.length > 0,
+    `${animalClaims.length} claims`,
+  );
+  const humanClaims = (allClaims ?? []).filter((c) =>
+    /randomized|Phase 1|Phase 2|participants/i.test(c.statement),
+  );
+  record(
+    'at least one claim is clearly labeled as a human trial finding',
+    humanClaims.length > 0,
+    `${humanClaims.length} claims`,
+  );
 
   // --- draft visibility / admin-only ---------------------------------
   record('compound status is draft', compound.status === 'draft', compound.status);
-  const { data: publishedOnly } = await client.from('compounds').select('id').eq('status', 'published').eq('slug', 'eloralintide');
+  const { data: publishedOnly } = await client
+    .from('compounds')
+    .select('id')
+    .eq('status', 'published')
+    .eq('slug', 'eloralintide');
   record('excluded by any status=published-only query', (publishedOnly?.length ?? 0) === 0);
   const allDraft = (allClaims ?? []).length > 0; // re-fetch with status below
-  const { data: claimStatuses } = await client.from('claims').select('status').eq('compound_id', compound.id);
+  const { data: claimStatuses } = await client
+    .from('claims')
+    .select('status')
+    .eq('compound_id', compound.id);
   const nonDraft = (claimStatuses ?? []).filter((c) => c.status !== 'draft');
-  record('every claim is status=draft (none published)', allDraft && nonDraft.length === 0, `${nonDraft.length} non-draft`);
-  const { data: shopLink } = await client.from('shop_products').select('id').eq('compound_id', compound.id);
+  record(
+    'every claim is status=draft (none published)',
+    allDraft && nonDraft.length === 0,
+    `${nonDraft.length} non-draft`,
+  );
+  const { data: shopLink } = await client
+    .from('shop_products')
+    .select('id')
+    .eq('compound_id', compound.id);
   record('not linked to any shop product', (shopLink?.length ?? 0) === 0);
 
   const failed = results.filter((r) => !r.pass);

@@ -38,13 +38,16 @@ if (!migrationPath) {
 
 const match = basename(migrationPath).match(/^(\d{14})_(.+)\.sql$/);
 if (!match) {
-  console.error('Migration filename must match supabase\'s <timestamp>_<name>.sql convention.');
+  console.error("Migration filename must match supabase's <timestamp>_<name>.sql convention.");
   process.exit(1);
 }
 const [, version, name] = match;
 
 const env = loadEnv();
-const client = new pg.Client({ connectionString: env.PROD_DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const client = new pg.Client({
+  connectionString: env.PROD_DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 await client.connect();
 try {
   const sql = readFileSync(migrationPath, 'utf8');

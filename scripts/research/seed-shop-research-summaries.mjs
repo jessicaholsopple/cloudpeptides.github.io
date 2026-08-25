@@ -34,13 +34,18 @@ if (missing.length > 0 || extra.length > 0) {
   process.exit(1);
 }
 
-console.log(`Coverage OK: ${authoredSlugs.size} authored summaries match ${liveSlugs.size} live product slugs exactly.`);
+console.log(
+  `Coverage OK: ${authoredSlugs.size} authored summaries match ${liveSlugs.size} live product slugs exactly.`,
+);
 
 let upserted = 0;
 for (const [slug, { preview, full }] of Object.entries(SHOP_RESEARCH_SUMMARIES)) {
   const { error: upsertError } = await client
     .from('shop_product_research_summaries')
-    .upsert({ product_slug: slug, preview_text: preview, full_text: full }, { onConflict: 'product_slug' });
+    .upsert(
+      { product_slug: slug, preview_text: preview, full_text: full },
+      { onConflict: 'product_slug' },
+    );
   if (upsertError) {
     console.error(`  ! failed for "${slug}":`, upsertError.message);
     continue;
