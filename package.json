@@ -30,6 +30,8 @@
     "db:verify-product-wizard": "node scripts/migration/verify-product-wizard.mjs",
     "db:verify-staging-read-only": "node scripts/migration/verify-staging-read-only.mjs",
     "db:verify-push-orders-research": "node scripts/migration/verify-push-orders-research.mjs",
+    "db:verify-eloralintide-research": "node scripts/migration/verify-eloralintide-research.mjs",
+    "db:verify-shop-research-summaries-rls": "node scripts/migration/verify-shop-research-summaries-rls.mjs",
     "db:export-for-production": "node scripts/migration/export-published-for-production.mjs",
     "db:backup-production": "node scripts/migration/backup-production.mjs",
     "db:restore-verify-backup": "node scripts/migration/restore-verify-backup.mjs"

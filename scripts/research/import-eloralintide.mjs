@@ -8,6 +8,7 @@
 // are documented in
 // docs/research/2026-08-25-eloralintide-research-manifest.md — this
 // file is the mechanical import, not the research record itself.
+import { pathToFileURL } from 'node:url';
 import { getServiceClient, importCompound, standardBoilerplateClaims } from './lib/import-helpers.mjs';
 
 const SEARCH_DATE = '2026-08-25';
@@ -42,7 +43,7 @@ const SEARCH_TERMS = [
 // release/explainer use 'regulatory_announcement'/'other' and are never
 // cited as directly_supports for a scientific claim.
 // ---------------------------------------------------------------------
-const sources = {
+export const sources = {
   molMetab: {
     sourceType: 'pubmed_article',
     title:
@@ -675,7 +676,13 @@ async function main() {
   console.log('\nResult:', JSON.stringify(result));
 }
 
-main().catch((err) => {
-  console.error('FATAL:', err);
-  process.exit(1);
-});
+// Only auto-run when executed directly (`node import-eloralintide.mjs`)
+// — scripts/migration/verify-eloralintide-research.mjs imports this
+// module's `sources` export for verification and must not trigger a
+// second live import as a side effect of that import.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((err) => {
+    console.error('FATAL:', err);
+    process.exit(1);
+  });
+}
