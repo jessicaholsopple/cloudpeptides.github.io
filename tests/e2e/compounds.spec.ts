@@ -24,6 +24,12 @@ import { expect, test } from '@playwright/test';
 // Compounds tab is the default/landing view, so most of this file's
 // existing assertions just needed 74 -> 65; new tests below cover the
 // Stacks tab and the tab mechanism itself.
+//
+// Count updated 65 -> 66 (2026-08-25): Eloralintide reviewed and
+// published by the user (see scripts/research/publish-eloralintide.mjs
+// and docs/research/2026-08-25-eloralintide-research-manifest.md) —
+// confirmed directly against the database, not assumed. Stacks count
+// (9) unchanged — Eloralintide is entity_kind='peptide', not a stack.
 
 test.describe('compound directory', () => {
   test('renders the published directory with real data, no fixtures', async ({ page }) => {
@@ -35,7 +41,7 @@ test.describe('compound directory', () => {
     await page.goto('/research/compounds');
     await expect(page).toHaveTitle(/Compound Directory/);
     await expect(page.getByRole('heading', { name: 'Compound Directory' })).toBeVisible();
-    await expect(page.getByText(/^65 compounds$/)).toBeVisible();
+    await expect(page.getByText(/^66 compounds$/)).toBeVisible();
     await expect(page.locator('[data-compound-search]')).toHaveCount(1);
     // Never the dev-fixture compound — this suite runs without
     // PUBLIC_ENABLE_DEV_FIXTURES set, so real Supabase data only.
@@ -48,14 +54,14 @@ test.describe('compound directory', () => {
   test('search filters to a real compound by name', async ({ page }) => {
     await page.goto('/research/compounds');
     await page.locator('[data-compound-search]').fill('BPC-157');
-    await expect(page.getByText(/of 65 compounds/)).toBeVisible();
+    await expect(page.getByText(/of 66 compounds/)).toBeVisible();
     await expect(page.locator('[data-compound-item]:not([hidden])')).toHaveCount(2); // BPC-157 + BPC-157 + TB-500 blend
   });
 
   test('search filters to a real compound by alias', async ({ page }) => {
     await page.goto('/research/compounds');
     await page.locator('[data-compound-search]').fill('Elamipretide');
-    await expect(page.getByText('1 of 65 compounds')).toBeVisible();
+    await expect(page.getByText('1 of 66 compounds')).toBeVisible();
     const visible = page.locator('[data-compound-item]:not([hidden])');
     await expect(visible).toHaveCount(1);
     await expect(visible).toContainText('SS-31');
@@ -64,7 +70,7 @@ test.describe('compound directory', () => {
   test('mobile viewport renders the populated directory correctly', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/research/compounds');
-    await expect(page.getByText(/^65 compounds$/)).toBeVisible();
+    await expect(page.getByText(/^66 compounds$/)).toBeVisible();
   });
 
   test('has no detectable automated accessibility violations', async ({ page }) => {

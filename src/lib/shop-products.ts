@@ -29,12 +29,25 @@ export interface ProductOption {
   price: number;
 }
 
+export interface ResearchSummary {
+  preview: string;
+  full: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   category: string;
   options: ProductOption[];
   featured: boolean;
+  // Plain-English "what researchers are studying" shop content
+  // (2026-08-25), sourced from public.shop_product_research_summaries
+  // by src/lib/public-shop.ts — undefined here on the static rollback
+  // fixture (which has no live DB row to join against) and whenever no
+  // summary has been authored yet for a product_slug. Never sourced
+  // from or joined against public.compounds — see that table's own
+  // migration comment for why (CLAUDE.md §7 research/shop separation).
+  researchSummary?: ResearchSummary;
 }
 
 export const PRODUCTS: Product[] = [

@@ -4,8 +4,9 @@ import { expect, test, type Page } from '@playwright/test';
 /**
  * Compounds/Stacks tabs + equal-height card grid (2026-08-20, approved).
  * Real data only (no PUBLIC_ENABLE_DEV_FIXTURES) — confirmed live via
- * an earlier run's accessible-tree output: 65 compounds + 9 stacks = the
- * existing 74 total (tests/e2e/compounds.spec.ts), never assumed.
+ * an earlier run's accessible-tree output: 66 compounds + 9 stacks = the
+ * existing 75 total (tests/e2e/compounds.spec.ts), never assumed. (Was
+ * 65+9=74 before Eloralintide published, 2026-08-25.)
  */
 
 const COMPOUNDS_TAB = '[role="tab"][data-tab="compounds"]';
@@ -23,7 +24,7 @@ test.describe('Compounds/Stacks tabs', () => {
     await page.goto('/research/compounds');
     await expect(page.locator(COMPOUNDS_TAB)).toHaveAttribute('aria-selected', 'true');
     await expect(page.locator(STACKS_TAB)).toHaveAttribute('aria-selected', 'false');
-    await expect(page.getByText(/^65 compounds$/)).toBeVisible();
+    await expect(page.getByText(/^66 compounds$/)).toBeVisible();
     const kinds = await visibleEntityKinds(page);
     expect(kinds.length).toBeGreaterThan(0);
     expect(kinds.every((k) => k !== 'stack')).toBe(true);
@@ -49,7 +50,7 @@ test.describe('Compounds/Stacks tabs', () => {
   test('an invalid view value falls back safely to Compounds', async ({ page }) => {
     await page.goto('/research/compounds?view=not-a-real-tab');
     await expect(page.locator(COMPOUNDS_TAB)).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByText(/^65 compounds$/)).toBeVisible();
+    await expect(page.getByText(/^66 compounds$/)).toBeVisible();
   });
 
   test('refreshing the page preserves the selected tab', async ({ page }) => {
@@ -69,7 +70,7 @@ test.describe('Compounds/Stacks tabs', () => {
 
     await page.goBack();
     await expect(page.locator(COMPOUNDS_TAB)).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByText(/^65 compounds$/)).toBeVisible();
+    await expect(page.getByText(/^66 compounds$/)).toBeVisible();
 
     await page.goForward();
     await expect(page.locator(STACKS_TAB)).toHaveAttribute('aria-selected', 'true');
@@ -142,7 +143,7 @@ test.describe('Compounds/Stacks tabs', () => {
     const allCompoundNames = await page
       .locator(VISIBLE_ITEMS)
       .evaluateAll((els) => els.map((el) => el.getAttribute('data-name')));
-    expect(allCompoundNames.length).toBe(65);
+    expect(allCompoundNames.length).toBe(66);
 
     await page.locator(STACKS_TAB).click();
     const stackNames = await page
@@ -203,7 +204,7 @@ test.describe('Equal-height compound cards', () => {
     page,
   }) => {
     // Sort by name so short- and long-name cards both land in the first
-    // page without needing to page through all 65.
+    // page without needing to page through all 66.
     await page.goto('/research/compounds');
     const heights = await page
       .locator(`${VISIBLE_ITEMS} .cp-compound-card`)

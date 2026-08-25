@@ -51,6 +51,12 @@ interface PublicShopRow {
 
 const PUBLIC_SHOP_SELECT = 'code, name, spec, count, price, product_slug, product_categories(name)';
 
+interface ResearchSummaryRow {
+  product_slug: string;
+  preview_text: string;
+  full_text: string;
+}
+
 /**
  * Groups flat published SKU rows into the exact Product/ProductOption
  * shape the static catalog always produced, so every existing pure
@@ -66,8 +72,17 @@ const PUBLIC_SHOP_SELECT = 'code, name, spec, count, price, product_slug, produc
  * Supabase-sourced products (nothing has ever read that field even on
  * the static catalog it's ported from — see shop-products.ts) and is
  * always false here, never a fabricated guess.
+ *
+ * `summaryRows` is optional and merged in a second, separate pass
+ * rather than a PostgREST embed — shop_product_research_summaries
+ * deliberately has no foreign key to shop_products (see that table's
+ * own migration comment), so there is no relationship for PostgREST to
+ * embed; a plain product_slug lookup does the same job just as safely.
  */
-export function groupShopProductRows(rows: PublicShopRow[]): Product[] {
+export function groupShopProductRows(
+  rows: PublicShopRow[],
+  summaryRows: ResearchSummaryRow[] = [],
+): Product[] {
   const bySlug = new Map<string, Product>();
   for (const row of rows) {
     if (!row.product_slug) continue;
@@ -90,7 +105,26 @@ export function groupShopProductRows(rows: PublicShopRow[]): Product[] {
       });
     }
   }
+  for (const summary of summaryRows) {
+    const product = bySlug.get(summary.product_slug);
+    if (product) {
+      product.researchSummary = { preview: summary.preview_text, full: summary.full_text };
+    }
+  }
   return [...bySlug.values()];
+}
+
+async function fetchResearchSummaries(
+  supabase: ReturnType<typeof getClient>,
+  productSlugs: string[],
+): Promise<ResearchSummaryRow[]> {
+  if (productSlugs.length === 0) return [];
+  const { data, error } = await supabase
+    .from('shop_product_research_summaries')
+    .select('product_slug, preview_text, full_text')
+    .in('product_slug', productSlugs);
+  if (error) throw error;
+  return (data ?? []) as ResearchSummaryRow[];
 }
 
 /** The full public shop listing — every published, slugged SKU,
@@ -105,7 +139,12 @@ export async function listPublicShopProducts(accessToken: string): Promise<Produ
     .order('name', { ascending: true })
     .order('price', { ascending: true });
   if (error) throw error;
-  return groupShopProductRows((data ?? []) as unknown as PublicShopRow[]);
+  const rows = (data ?? []) as unknown as PublicShopRow[];
+  const slugs = [
+    ...new Set(rows.map((r) => r.product_slug).filter((s): s is string => Boolean(s))),
+  ];
+  const summaryRows = await fetchResearchSummaries(supabase, slugs);
+  return groupShopProductRows(rows, summaryRows);
 }
 
 /** One product page's worth of variants by product_slug — returns null
@@ -123,7 +162,8 @@ export async function getPublicShopProduct(
     .eq('product_slug', slug)
     .order('price', { ascending: true });
   if (error) throw error;
-  const grouped = groupShopProductRows((data ?? []) as unknown as PublicShopRow[]);
+  const summaryRows = await fetchResearchSummaries(supabase, [slug]);
+  const grouped = groupShopProductRows((data ?? []) as unknown as PublicShopRow[], summaryRows);
   return grouped[0] ?? null;
 }
 

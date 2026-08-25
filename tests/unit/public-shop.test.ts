@@ -99,6 +99,79 @@ describe('groupShopProductRows', () => {
     expect(products[0].category).toBe('');
   });
 
+  // 2026-08-25 — plain-English shop research summaries. A summary row
+  // is looked up by product_slug and merged onto the ALREADY-GROUPED
+  // product, so one authored row is reused across however many SKU
+  // rows (mg strengths) share that slug, never duplicated per SKU.
+  it('reuses one research summary across every SKU variant sharing a product_slug', () => {
+    const rows = [
+      {
+        code: 'CU50',
+        name: 'GHK-CU',
+        spec: '50mg',
+        count: 10,
+        price: 120,
+        product_slug: 'ghk-cu',
+        product_categories: { name: 'Beauty + Repair' },
+      },
+      {
+        code: 'CU100',
+        name: 'GHK-CU',
+        spec: '100mg',
+        count: 10,
+        price: 170,
+        product_slug: 'ghk-cu',
+        product_categories: { name: 'Beauty + Repair' },
+      },
+    ];
+    const summaryRows = [
+      { product_slug: 'ghk-cu', preview_text: 'Preview text.', full_text: 'Full explanation.' },
+    ];
+    const products = groupShopProductRows(rows, summaryRows);
+    expect(products).toHaveLength(1);
+    expect(products[0].options).toHaveLength(2);
+    expect(products[0].researchSummary).toEqual({
+      preview: 'Preview text.',
+      full: 'Full explanation.',
+    });
+  });
+
+  it('leaves researchSummary undefined for a product with no authored summary row', () => {
+    const products = groupShopProductRows(
+      [
+        {
+          code: 'AU50',
+          name: 'AHK-CU',
+          spec: '50mg',
+          count: 10,
+          price: 110,
+          product_slug: 'ahk-cu',
+          product_categories: { name: 'Beauty + Repair' },
+        },
+      ],
+      [],
+    );
+    expect(products[0].researchSummary).toBeUndefined();
+  });
+
+  it('ignores a summary row whose product_slug matches no grouped product', () => {
+    const products = groupShopProductRows(
+      [
+        {
+          code: 'AU50',
+          name: 'AHK-CU',
+          spec: '50mg',
+          count: 10,
+          price: 110,
+          product_slug: 'ahk-cu',
+          product_categories: { name: 'Beauty + Repair' },
+        },
+      ],
+      [{ product_slug: 'no-such-product', preview_text: 'x', full_text: 'y' }],
+    );
+    expect(products[0].researchSummary).toBeUndefined();
+  });
+
   it('preserves distinct products separately, not merged by name', () => {
     const products = groupShopProductRows([
       {
