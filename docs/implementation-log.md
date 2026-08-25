@@ -2,6 +2,119 @@
 
 Append-only. One entry per meaningful step, per [CLAUDE.md](../CLAUDE.md) §3/§11/§12.
 
+## Eloralintide research profile + shop research-summary content/UI (2026-08-25)
+
+Not yet deployed to staging or merged to main — committed to `rebuild/astro-platform` locally,
+awaiting explicit go-ahead per CLAUDE.md §9 before pushing/deploying.
+
+**1. Eloralintide (LY3841136) draft research profile.** Commit `a975e52`.
+
+Pre-import dedup check (`scripts/research/check-eloralintide.mjs`) confirmed no existing compound/
+alias matched among 74 published compounds. Independently verified research pass (search date
+2026-08-25) across ClinicalTrials.gov's own API, PubMed/PMC (NCBI E-utilities), and CrossRef: 3
+peer-reviewed papers (Molecular Metabolism 2025 preclinical+Phase 1 SAD; Diabetes, Obesity and
+Metabolism 2026 Phase 1 MAD; The Lancet 2025 Phase 2, 263 participants/48 weeks) + 1 ADA 2025
+conference abstract (deduped as a preliminary presentation of the same MAD study, not double-counted)
++ 21 ClinicalTrials.gov registrations found for eloralintide directly (14 more than the 7 supplied
+starting IDs, via a full-text registry search) — see
+[docs/research/2026-08-25-eloralintide-research-manifest.md](research/2026-08-25-eloralintide-research-manifest.md)
+for the full source list, dedup reasoning, and evidence limitations. One AI-search-summary claim (a
+"plasma calcium reduction" finding) was independently re-checked against primary full text, found
+unsupported, and deliberately excluded rather than asserted — the caught-error itself is documented in
+the manifest.
+
+Imported via `scripts/research/import-eloralintide.mjs` (idempotent, existence-checked by slug):
+1 compound (`status='draft'`, `identity_confidence='verified'`), 3 aliases, 26 sources (with DOI/PMID/
+PMCID/NCT/CTIS identifiers), 3 studies, 25 claims (evidence_quality/interpretation_status set
+independently per claim, animal and human findings never combined into one statement), 1 regulatory
+record (investigational, no approval in any jurisdiction). **Not published, no shop link.**
+`scripts/migration/verify-eloralintide-research.mjs` (`db:verify-eloralintide-research`): 14/14 checks
+pass against the live project (duplicate/alias detection, source/identifier dedup, animal-vs-human
+evidence labeling, draft visibility).
+
+**2. Shop plain-English research summaries — data model.** Commit `00182d0`.
+
+New `shop_product_research_summaries` table (`supabase/migrations/20260825120000_shop_research_summaries.sql`),
+keyed by `product_slug` (natural primary key — one row reused across every mg-strength SKU sharing that
+slug), deliberately with no FK to `compounds` at all (structural, not just editorial, enforcement of
+CLAUDE.md §7's research/shop separation and the CP-S1/CP-T2/CP-R3 identity-protection rule).
+
+**A real bug found and fixed live, not just assumed:** the first version of this migration granted
+`anon` SELECT, reasoning in its own comment that this matched `shop_products`' "future-proofing, not an
+active hole today." A direct check with the real anon key proved that wrong — `shop_products`/
+`compounds` correctly return "permission denied" for anon (the 2026-08-13 gate-revoke migration stripped
+their anon grants), but this new table, created after that revoke migration ran, was never swept by it
+and was genuinely anon-readable. Fixed in commit `7bd5b63`
+(`supabase/migrations/20260825120001_shop_research_summaries_anon_revoke_fix.sql`) — anon SELECT
+revoked, policy narrowed to authenticated-only, zero functional impact (the app already reads this
+table exclusively through the visitor's own session token). `db:verify-shop-research-summaries-rls`
+guards the regression going forward.
+
+**3. Shop plain-English research summaries — content.** Commit `1d59c64`.
+
+"Barney style" two-layer content (short preview + fuller "What researchers are studying" explanation)
+authored for all 47 live shop products (13 Beauty + Repair, 16 Weight Loss + Metabolic incl. CP-S1/
+CP-T2/CP-R3, 18 Repair + Other). Blends (BPC+TB, CJC no DAC+IPA) explain each component separately and
+state explicitly that the combination itself hasn't been adequately studied; unconfirmed blend
+formulations (GLOW, KLOW, Adamax) say so explicitly rather than guessing a formula (same principle as
+"Lipo-C" in the 2026-08-19 reconciliation manifest); AOD9605 is never aliased to AOD-9604 (CLAUDE.md
+§7/§27.3); CP-S1/CP-T2/CP-R3 use deliberately generic, near-identical framing that never differentiates
+by receptor-mechanism specificity, since that differentiation is exactly what would reveal which
+protected compound each corresponds to. Every entry ends with the standard research-only notice.
+`scripts/research/seed-shop-research-summaries.mjs` upserts the content and validates exact 1:1 coverage
+against the live catalog before writing (fails loudly on any mismatch, never partially writes) — run
+against the live shared project: 47/47 upserted.
+
+**4. Shop UI + accessibility.** Commit `3e2e22b`.
+
+`src/lib/public-shop.ts` merges summary rows onto grouped products (a second query, not a PostgREST
+embed, since the table has no FK to embed against). Shop grid cards restructured so the product-name/
+price link and the new "What researchers are studying" disclosure are siblings, not nested (a
+`<summary>` nested inside an `<a>` is invalid HTML and would fire both the toggle and the navigation on
+one click). The disclosure uses native `<details>/<summary>` — full keyboard support and
+expanded/collapsed screen-reader announcement with zero JS. Equal collapsed-card height is guaranteed by
+fixed-height CSS clamping on the preview text (not by grid row-stretch, which would otherwise force an
+expanded card's height onto its row siblings); `prefers-reduced-motion` guards the disclosure-arrow
+animation. The product detail page's pre-existing "No peptide information... provided on this page"
+disclaimer no longer matched reality once real research context appeared there, so it was reworded
+rather than left stale.
+
+**5. Tests.** Commit `94980d2`.
+
+`tests/unit/shop-research-summaries.test.ts` (catalog-coverage parity, editorial guardrails including a
+sentence-level negation-aware "safe" check, blend wording, CP-S1/CP-T2/CP-R3 identity separation),
+extended `tests/unit/public-shop.test.ts` (summary reuse across SKUs), and
+`tests/e2e/shop-research-summaries.spec.ts` (equal collapsed-card height, expand/collapse without
+navigating, keyboard-only open/close, axe scans, mobile single-column layout, one summary shown
+regardless of option count, CP-S1/CP-T2/CP-R3 pages link to and mention none of the three protected
+profiles).
+
+**Verification, all against the real live shared Supabase project and a real local build/preview, not
+assumed:** `astro check` (353 files) + `tsc --noEmit` clean; 0 lint errors; `npx vitest run` —
+478/478 unit tests pass; `npm run test:e2e` — **144/144 e2e tests pass**, including every pre-existing
+shop/cart/COA/contact/research-directory/researcher-gate test (no regression) and the pre-existing
+"CP-S1/CP-T2/CP-R3 shop products still carry no link to the separate research profiles" test;
+`npm run check:links` — 93/93 links ok; `npm run check:secrets` — clean;
+`db:verify-eloralintide-research` — 14/14; `db:verify-shop-research-summaries-rls` — 2/2 (post-fix).
+
+**Known limitations:**
+- `format:check`/prettier flags 128 pre-existing files for CRLF line endings — the same documented
+  false positive noted in the 2026-08-13 entry (blob-level, not introduced by this session); none of
+  this session's new files are in that list.
+- The Supabase CLI installed in this environment rejects the current `SUPABASE_ACCESS_TOKEN` format as
+  invalid (`LegacyInvalidAccessTokenError`) even though the same token authenticates fine for ordinary
+  service-role access — worth fixing in a future session. Both migrations in this entry were applied via
+  a new direct-connection runner, `scripts/migration/apply-migration.mjs`, instead.
+- Shop research-summary content (47 entries) was authored from established, widely-corroborated general
+  peptide-research literature, not a fresh per-item citation pass like Eloralintide's — this matches
+  what was asked for (shop copy, not `claims`/`sources` rows), but individual factual claims within it
+  were not independently re-verified against primary sources this session the way Eloralintide's were.
+- CTIS identifiers recorded on the Eloralintide profile were captured as submitted by the sponsor into
+  ClinicalTrials.gov records, not independently cross-checked against the EU CTIS portal itself.
+- "Lemon Bottle"'s shop description intentionally does not restate specific FDA/regulatory-warning
+  details mentioned in the 2026-08-08 correction-pass log entry, since those weren't independently
+  re-verified as part of this content pass.
+
 ## Admin PWA + Web Push + order-request persistence + 18-profile research expansion (2026-08-19)
 
 Deployed to staging then production (both explicitly approved). Full detail lives in the 14 commits
